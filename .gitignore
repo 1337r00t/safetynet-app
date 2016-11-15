@@ -8,3 +8,6 @@
 .idea/inspectionProfiles/Project_Default.xml
 .idea/inspectionProfiles/profiles_settings.xml
 app/app-release.apk
+app/apk-signing.jks
+keystore.txt
+keystore.properties
