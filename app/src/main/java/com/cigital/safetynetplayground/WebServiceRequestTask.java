@@ -184,7 +184,10 @@ public class WebServiceRequestTask extends AsyncTask<Context, Object, Void>
         try {
             if (connection.getResponseCode() == 500) {
                 // Our implementation will return 500 if verification fails
-                publishError(new Exception(), "API call verification failed.\r\nThis means that this device did not pass SafetyNet checks or you forgot to update digests on your server.");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                responseData = reader.readLine();
+                responseData=responseData.replaceAll(",", "\n"); // ugly hack
+                publishError(new Exception(), "SafetyNet attest failed.\r\n"+responseData);
                 return null;
             } else if (connection.getResponseCode() != 200) {
                 // Anything but 500 and 200 is not something our web service should return
@@ -202,7 +205,7 @@ public class WebServiceRequestTask extends AsyncTask<Context, Object, Void>
         try {
             reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             responseData = reader.readLine();
-            publishMessage(responseData + "\r\nThis means that your device has successfully passed SafetyNet checks.");
+            publishMessage(responseData + "\r\nPassed all SafetyNet checks.");
         } catch (IOException e) {
             e.printStackTrace();
             this.runtimeError(e);
